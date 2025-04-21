@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-import {legacyPlugin} from '@web/dev-server-legacy';
-import {playwrightLauncher} from '@web/test-runner-playwright';
+import { legacyPlugin } from '@web/dev-server-legacy';
+import { playwrightLauncher } from '@web/test-runner-playwright';
 
 const mode = process.env.MODE || 'dev';
 if (!['dev', 'prod'].includes(mode)) {
@@ -88,24 +88,19 @@ try {
 export default {
   rootDir: '.',
   files: ['./test/**/*_test.js'],
-  nodeResolve: {exportConditions: mode === 'dev' ? ['development'] : []},
+  nodeResolve: { exportConditions: mode === 'dev' ? ['development'] : [] },
   preserveSymlinks: true,
   browsers: commandLineBrowsers ?? Object.values(browsers),
   testFramework: {
-    // https://mochajs.org/api/mocha
     config: {
       ui: 'tdd',
       timeout: '60000',
     },
   },
   plugins: [
-    // Detect browsers without modules (e.g. IE11) and transform to SystemJS
-    // (https://modern-web.dev/docs/dev-server/plugins/legacy/).
     legacyPlugin({
       polyfills: {
         webcomponents: true,
-        // Inject lit's polyfill-support module into test files, which is required
-        // for interfacing with the webcomponents polyfills
         custom: [
           {
             name: 'lit-polyfill-support',

@@ -195,17 +195,27 @@ export class AddEmployeeModal extends LitElement {
 
   handleSubmit(e) {
     e.preventDefault();
-    const formData = new FormData(e.target);
-    const employee = Object.fromEntries(formData.entries());
+    e.stopPropagation();
     
+    const form = e.target;
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
     if (this.editMode) {
-      employee.id = this.employeeData.id;
-      this.dispatchEvent(new CustomEvent('update', { detail: employee }));
+      this.dispatchEvent(new CustomEvent('update', {
+        detail: { ...data, id: this.employeeData.id },
+        bubbles: true,
+        composed: true
+      }));
     } else {
-      this.dispatchEvent(new CustomEvent('submit', { detail: employee }));
+      this.dispatchEvent(new CustomEvent('submit', {
+        detail: data,
+        bubbles: true,
+        composed: true
+      }));
     }
-    
     this.closeModal();
+    return false;
   }
 
   render() {
@@ -224,7 +234,7 @@ export class AddEmployeeModal extends LitElement {
               <h3 class="modal-title">${this.editMode ? 'Edit Employee' : 'Add New Employee'}</h3>
               <button class="close-button" @click=${this.closeModal}>×</button>
             </div>
-            <form @submit=${this.handleSubmit}>
+            <form @submit=${this.handleSubmit} onsubmit="return false;">
               <div class="form-group">
                 <label for="firstName">First Name</label>
                 <input type="text" id="firstName" name="firstName" 
